@@ -14,10 +14,11 @@
             background-color: #282a36; /* Dark theme background */
             color: #f8f8f2; /* Light text */
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: flex-start; /* Align to top */
+            align-items: flex-start;
             height: 100vh;
             margin: 0;
+            padding: 20px;
             font-family: monospace;
         }
 
@@ -29,10 +30,12 @@
             border-radius: 8px;
             width: 80%;
             max-width: 800px;
+            height: 90vh; /* Ensure it covers most of the page */
+            overflow: auto; /* Allow scrolling */
             white-space: pre-wrap; /* Ensures line breaks */
-            overflow: hidden; /* Hide scrollbar */
-            font-size: 16px;
             word-break: break-word; /* Ensures text wraps properly */
+            text-align: left; /* Start from top-left */
+            font-size: 16px;
             display: block; /* Make sure it's block-level */
         }
     </style>
@@ -70,11 +73,14 @@ async function startRecording() {
 }`;
 
         let i = 0;
+        const animatedCodeElement = document.getElementById("animatedCode");
+
         function revealCode() {
             if (i < code.length) {
-                document.getElementById("animatedCode").innerHTML += code[i] === "\n" ? "<br>" : code[i];
+                animatedCodeElement.innerHTML += code[i] === "\n" ? "<br>" : code[i];
                 i++;
                 Prism.highlightAll(); // Apply syntax highlighting
+                animatedCodeElement.parentElement.scrollTop = animatedCodeElement.parentElement.scrollHeight; // Auto-scroll
                 setTimeout(revealCode, 10); // Adjust speed if needed
             }
         }
