@@ -132,7 +132,7 @@ startRecording(); // Restart the recording process to keep listening
 
 } else if (correctedText) {
 // If there's a factual mistake, display the feedback
-outputDiv.innerText = `${correctedText}`;
+outputDiv.innerText = "{correctedText}";
 speakCorrection(correctedText); // Speak out the feedback if needed
 }
 
