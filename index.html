@@ -158,6 +158,7 @@ startButton.addEventListener("click", startRecording);
 // Fix the animation function
 const display = document.getElementById("codeDisplay");
 let i = 0;
+
 function typeCode() {
     if (i < code.length) {
         display.innerHTML = code.substring(0, i) + '<span class="cursor"></span>';
@@ -167,9 +168,15 @@ function typeCode() {
         // Scroll to bottom to follow the code being typed
         display.scrollTop = display.scrollHeight;
     } else {
-        display.innerHTML = code;
+        // When finished typing, restart the animation
+        setTimeout(() => {
+            i = 0;  // Reset index to start from the beginning
+            display.innerHTML = '';  // Clear the display
+            typeCode();  // Start typing again
+        }, 1000);  // Delay before restarting
     }
 }
+
 typeCode();
     </script>
 </body>
