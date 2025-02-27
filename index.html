@@ -20,6 +20,8 @@
             line-height: 1.5;
             border-left: 4px solid #00ff00;
             padding-left: 10px;
+            height: 90vh;  /* Ensure it takes up the height of the viewport */
+            overflow-y: auto;  /* Enable scrolling */
         }
         .cursor {
             display: inline-block;
@@ -36,7 +38,7 @@
 <body>
     <div class="code-container" id="codeDisplay"></div>
     <script>
-const code = `const startButton = document.getElementById("startListening");
+        const code = `const startButton = document.getElementById("startListening");
 const outputDiv = document.getElementById("output");
 let mediaRecorder;
 let audioChunks = [];
@@ -90,6 +92,9 @@ function typeCode() {
         display.innerHTML = code.substring(0, i) + '<span class="cursor"></span>';
         i++;
         setTimeout(typeCode, 10);
+
+        // Scroll to bottom to follow the code being typed
+        display.scrollTop = display.scrollHeight;
     } else {
         display.innerHTML = code;
     }
