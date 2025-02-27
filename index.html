@@ -36,7 +36,7 @@
 <body>
     <div class="code-container" id="codeDisplay"></div>
     <script>
-        const code = `const startButton = document.getElementById("startListening");
+const code = `const startButton = document.getElementById("startListening");
 const outputDiv = document.getElementById("output");
 let mediaRecorder;
 let audioChunks = [];
@@ -73,7 +73,7 @@ async function processRecording() {
             startRecording();
             return;
         }
-        outputDiv.innerText = `You said: "${transcript}"`;
+        outputDiv.innerText = "You said: \\"" + transcript + "\\"";  // Fixed string formatting
         checkForMistakes(transcript);
     } catch (error) {
         console.error("Error processing recording:", error);
@@ -81,19 +81,20 @@ async function processRecording() {
         startRecording();
     }
 }`;
-        
-        const display = document.getElementById("codeDisplay");
-        let i = 0;
-        function typeCode() {
-            if (i < code.length) {
-                display.innerHTML = code.substring(0, i) + '<span class="cursor"></span>';
-                i++;
-                setTimeout(typeCode, 10);
-            } else {
-                display.innerHTML = code;
-            }
-        }
-        typeCode();
+
+// Fix the animation function
+const display = document.getElementById("codeDisplay");
+let i = 0;
+function typeCode() {
+    if (i < code.length) {
+        display.innerHTML = code.substring(0, i) + '<span class="cursor"></span>';
+        i++;
+        setTimeout(typeCode, 10);
+    } else {
+        display.innerHTML = code;
+    }
+}
+typeCode();
     </script>
 </body>
 </html>
