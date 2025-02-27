@@ -1,9 +1,49 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-<pre><code class="language-js" id="animatedCode"></code></pre>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Code Display</title>
+    
+    <!-- Prism.js CSS for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    
+    <style>
+        /* Set the background to match Prism's theme */
+        body {
+            background-color: #282a36; /* Dark theme background */
+            color: #f8f8f2; /* Light text */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: monospace;
+        }
 
-<script>
-    const code = `const startButton = document.getElementById("startListening");
+        /* Code block styling */
+        pre {
+            background: #282a36; /* Matching background */
+            color: #f8f8f2; /* Code text color */
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            white-space: pre-wrap; /* Ensure line breaks */
+            overflow: hidden; /* Hide scrollbar */
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <pre><code class="language-js" id="animatedCode"></code></pre>
+
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+
+    <script>
+        const code = `const startButton = document.getElementById("startListening");
 const outputDiv = document.getElementById("output");
 
 // 🎤 Start Recording
@@ -27,14 +67,17 @@ async function startRecording() {
     }
 }`;
 
-    let i = 0;
-    function revealCode() {
-        if (i < code.length) {
-            document.getElementById("animatedCode").innerText += code[i];
-            i++;
-            Prism.highlightAll();
-            setTimeout(revealCode, 10);
+        let i = 0;
+        function revealCode() {
+            if (i < code.length) {
+                document.getElementById("animatedCode").innerText += code[i];
+                i++;
+                Prism.highlightAll(); // Apply syntax highlighting
+                setTimeout(revealCode, 10); // Adjust speed if needed
+            }
         }
-    }
-    revealCode();
-</script>
+        revealCode();
+    </script>
+
+</body>
+</html>
