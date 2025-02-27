@@ -29,9 +29,11 @@
             border-radius: 8px;
             width: 80%;
             max-width: 800px;
-            white-space: pre-wrap; /* Ensure line breaks */
+            white-space: pre-wrap; /* Ensures line breaks */
             overflow: hidden; /* Hide scrollbar */
             font-size: 16px;
+            word-break: break-word; /* Ensures text wraps properly */
+            display: block; /* Make sure it's block-level */
         }
     </style>
 </head>
@@ -70,7 +72,7 @@ async function startRecording() {
         let i = 0;
         function revealCode() {
             if (i < code.length) {
-                document.getElementById("animatedCode").innerText += code[i];
+                document.getElementById("animatedCode").innerHTML += code[i] === "\n" ? "<br>" : code[i];
                 i++;
                 Prism.highlightAll(); // Apply syntax highlighting
                 setTimeout(revealCode, 10); // Adjust speed if needed
