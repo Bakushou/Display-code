@@ -20,9 +20,15 @@
             line-height: 1.5;
             border-left: 4px solid #00ff00;
             padding-left: 10px;
-            height: 90vh;  /* Ensure it takes up the height of the viewport */
+            height: 90vh;
             overflow-y: auto;  /* Enable scrolling */
         }
+        
+        /* Hide the scrollbar */
+        .code-container::-webkit-scrollbar {
+            display: none;
+        }
+        
         .cursor {
             display: inline-block;
             width: 8px;
@@ -40,49 +46,114 @@
     <script>
         const code = `const startButton = document.getElementById("startListening");
 const outputDiv = document.getElementById("output");
+
 let mediaRecorder;
 let audioChunks = [];
 
 // 🎤 Start Recording
 async function startRecording() {
-    speechSynthesis.cancel();
-    outputDiv.innerText = "Listening...";
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
-        mediaRecorder.onstop = processRecording;
-        audioChunks = [];
-        mediaRecorder.start();
-        setTimeout(() => mediaRecorder.stop(), 5000);
-    } catch (error) {
-        console.error("Microphone access error:", error);
-        outputDiv.innerText = "Error accessing microphone!";
-    }
+speechSynthesis.cancel();
+outputDiv.innerText = "Listening... 🎤"
+try {
+
+const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+mediaRecorder = new MediaRecorder(stream);
+
+mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+mediaRecorder.onstop = processRecording;
+
+audioChunks = [];
+mediaRecorder.start();
+
+setTimeout(() => mediaRecorder.stop(), 5000); // stop after 5 seconds
+} catch (error) {
+console.error("Microphone access error:", error);
+outputDiv.innerText = "Error accessing microphone!";
+}
 }
 
 // 🔊 Process Audio
 async function processRecording() {
-    const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-    const formData = new FormData();
-    formData.append("audio", audioBlob);
-    try {
-        const response = await fetch("http://localhost:3000/speech-to-text", { method: "POST", body: formData });
-        const data = await response.json();
-        const transcript = data.transcript;
-        if (!transcript) {
-            outputDiv.innerText = "Couldn't recognize speech. Retrying... 🎤";
-            startRecording();
-            return;
-        }
-        outputDiv.innerText = "You said: \\"" + transcript + "\\"";  // Fixed string formatting
-        checkForMistakes(transcript);
-    } catch (error) {
-        console.error("Error processing recording:", error);
-        outputDiv.innerText = "Error processing speech. Retrying... 🎤";
-        startRecording();
-    }
-}`;
+const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+const formData = new FormData();
+formData.append("audio", audioBlob);
+
+try {
+const response = await fetch("http://localhost:3000/speech-to-text", {
+method: "POST",
+body: formData,
+});
+
+const data = await response.json();
+const transcript = data.transcript;
+
+if (!transcript) {
+outputDiv.innerText = "Couldn't recognize speech. Retrying... 🎤";
+console.log("No transcript recognized, retrying...");
+startRecording(); // Restart the listening process
+return;
+}
+
+outputDiv.innerText = `You said: "${transcript}"`;
+checkForMistakes(transcript);
+} catch (error) {
+
+console.error("Error processing recording:", error);
+outputDiv.innerText = "Error processing speech. Retrying... 🎤";
+startRecording(); // Restart the listening process
+}
+
+}
+
+// 📝 Check for Mistakes
+async function checkForMistakes(transcript) {
+try {
+const response = await fetch("http://localhost:3000/checkMistake", {
+method: "POST",
+headers: {
+"Content-Type": "application/json",
+},
+body: JSON.stringify({ transcript: transcript }), // Ensure it's wrapped in an object
+
+});
+
+if (!response.ok) {
+}
+
+const data = await response.json();
+console.log("OpenAI Response:", data);
+const correctedText = data.correctedText;
+
+// Check if 'Null' appears in the response
+if (correctedText && correctedText.toLowerCase().includes("null")) {
+console.log("The statement is correct. Keeping the system listening.");
+outputDiv.innerText = "Listening... 🎤"; // Keep the listening state
+startRecording(); // Restart the recording process to keep listening
+
+} else if (correctedText) {
+// If there's a factual mistake, display the feedback
+outputDiv.innerText = `${correctedText}`;
+speakCorrection(correctedText); // Speak out the feedback if needed
+}
+
+} catch (error) {
+console.error("Error checking for mistakes:", error);
+outputDiv.innerText = "Error checking for mistakes. Please try again!";
+
+}
+
+}
+
+// 🔊 Speak Correction
+function speakCorrection(text) {
+const utterance = new SpeechSynthesisUtterance(text);
+utterance.lang = "en-US";
+speechSynthesis.speak(utterance);
+}
+
+// 🎤 Button Click Event
+startButton.addEventListener("click", startRecording);
+`;
 
 // Fix the animation function
 const display = document.getElementById("codeDisplay");
